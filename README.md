@@ -11,7 +11,7 @@ https://github.com/user-attachments/assets/1f67d4a9-257b-4eac-956e-0840720c20a9
 ![image](https://github.com/user-attachments/assets/51ef55ce-8bab-4b94-a6ae-f13d7e3d2c65)
 
 
-* おおまかにはSlack、AWS、OpenAI APIの3構成
+* おおまかにはSlack、AWS、OpenAI APIの3構成です。
 * アプリはAWS上で動作していて、SlackとOpenAI APIの繋ぎの役割です。
 * LLMの回答はOpenAI APIを利用しています。
 ## 処理フローについて
