@@ -11,16 +11,19 @@ https://github.com/user-attachments/assets/1f67d4a9-257b-4eac-956e-0840720c20a9
 ![image](https://github.com/user-attachments/assets/51ef55ce-8bab-4b94-a6ae-f13d7e3d2c65)
 
 
-* AWS上で動作しています。
-* LLMの回答はOpenAIAPIを利用しています。
-* 処理フローについて
+* おおまかにはSlack、AWS、OpenAI APIの3構成
+* アプリはAWS上で動作していて、SlackとOpenAI APIの繋ぎの役割です。
+* LLMの回答はOpenAI APIを利用しています。
+## 処理フローについて
 1. 一次回答
-1.1 Slackに即時応答するために、回答生成中の旨を送信する
-1.2 SlackからのレスポンスのチャンネルIDとタイムスタンプを取得する
-    3. 非同期で引き継ぎ
-    4. 回答取得
-    5. 回答送信
-
-
-## シーケンス概要
-* SlackAPI→APIGW→Lambda→SQS→Lambda→OpenaiAPI→SlackAPI
+    1. Slackにとりあえずの応答として、回答生成中の旨を送信します。
+    2. Slackからのレスポンスに含まれているチャンネルIDとタイムスタンプを取得します。この情報をSQS経由で次のLambdaへ引き継ぎます。
+2. 非同期で引き継ぎ
+    1. SQSへチャンネルID、タイムスタンプ、ユーザからのクエリを登録します。
+        1. チャンネルID、タイムスタンプはLLMの回答取得後に、「回答生成中」のメッセージを後から更新するために利用します。
+        2. ユーザからのクエリは、LLMへ渡して、回答生成させるために利用します。        
+4. 回答取得
+    1. OpenAI APIへユーザクエリを渡して、Streamingを有効化してAPIをキックします。
+    2. OpenAI APIからチャンク毎にレスポンスが返ってきます。
+5. 回答送信
+    1. OpenAI APIからチャンク毎に返ってくるレスポンスを0.5秒のインターバルでまとめて、Slack上に繰り返し反映します。チャンク毎に反映しないのは、チャンク毎だと早すぎて、Slack上の描画が逆に遅くなってしまうので、止む無く、まとめて更新しています。
