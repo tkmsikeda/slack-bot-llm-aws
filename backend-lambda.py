@@ -69,12 +69,6 @@ def generate_openai_response(user_message):
 # LLMの回答生成に時間がかかるので、回答中の内容を徐々にSlackへ送る
 # 既存のメッセージを複数回更新する
 # Streamingで取得したチャンクごとにSlackへ送ると、Slackの処理が遅くなるので、0.5秒インターバルでバッファーして送る
-# チャンクされたテキストを結合する際に、毎回加算してもいいのだが、listのjoinで書くほうが処理が早いので、無駄に頑張った。
-# 以下Slack上の表示されるテキストの例
-# 0秒：AIが回答を作成中
-# 0.5秒後：abc
-# 1秒後：abcdef
-# 1.5秒後：abcdefghij
 def send_message_to_slack(channel_id, user_message, timestamp):
     print("start send_message_to_slack")
 
