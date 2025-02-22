@@ -76,6 +76,7 @@ def send_message_to_slack(channel_id, user_message, timestamp):
     reply_text_in_progress = ""
     for chunk in generate_openai_response(user_message):
 
+        # 先頭チャンクが必ず空文字で、Slackが空文字で送るとエラーになるので、スキップする（TODOもっといい処理がありそう）
         if not chunk:
             continue
 
